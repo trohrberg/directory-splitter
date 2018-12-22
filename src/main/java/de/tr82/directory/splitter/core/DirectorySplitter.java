@@ -12,19 +12,23 @@ public class DirectorySplitter {
     private final long firstChunkSize;
     private final long maxChunkSize;
 
-    private boolean dryRun;
+    private final boolean dryRun;
+
+    private final OperationLogger logger;
 
     private long currentChunkSize = 0;
     private int chunkNum = 1;
 
     public DirectorySplitter(final String sourceBasePath, final String targetBasePath, final String chunkNamePrefix,
-                             final long firstChunkSize, final long maxChunkSize, final boolean dryRun) {
+                             final long firstChunkSize, final long maxChunkSize, final boolean dryRun,
+                             final OperationLogger logger) {
         this.sourceBasePath = FileSystems.getDefault().getPath(sourceBasePath);
         this.targetBasePath = FileSystems.getDefault().getPath(targetBasePath);
         this.chunkNamePrefix = chunkNamePrefix;
         this.firstChunkSize = firstChunkSize;
         this.maxChunkSize = maxChunkSize;
         this.dryRun = dryRun;
+        this.logger = logger;
     }
 
     public void run() throws IOException {
@@ -34,30 +38,34 @@ public class DirectorySplitter {
     }
 
     private void printOperationInfo() {
-        System.out.println("----------------------");
-        System.out.println("| Directory Splitter |");
-        System.out.println("----------------------");
-        System.out.println();
-        System.out.println("Selected source directory    : " + sourceBasePath.toString());
-        System.out.println("Selected target directory    : " + targetBasePath.toString());
-        System.out.println("Naming convention of buckets : " + chunkNamePrefix + "###");
-        System.out.println();
+        logger.log("----------------------");
+        logger.log("| Directory Splitter |");
+        logger.log("----------------------");
+        logger.log("");
+        logger.log("Selected source directory    : " + sourceBasePath.toString());
+        logger.log("Selected target directory    : " + targetBasePath.toString());
+        logger.log("Naming convention of buckets : " + chunkNamePrefix + "###");
+        logger.log("");
 
         if (dryRun) {
-            System.out.println("DRY RUN - All operations are just simulated!");
-            System.out.println("The following operations would be performed if executed without 'dryRun' flag:");
-            System.out.println();
+            logger.log("DRY RUN - All operations are just simulated!");
+            logger.log("The following operations would be performed if executed without 'dryRun' flag:");
+            logger.log("");
         }
     }
 
     private void printOperationCompleted() {
-        System.out.println();
+        logger.log("");
 
         if (dryRun) {
-            System.out.println("Simulation completed: " + chunkNum + " buckets would have been created.");
+            logger.log("Simulation completed: " + chunkNum + " buckets would have been created.");
         } else {
-            System.out.println("Operation completed: " + chunkNum + " buckets have been created.");
+            logger.log("Operation completed: " + chunkNum + " buckets have been created.");
         }
+    }
+
+    public interface OperationLogger {
+        void log(final String message);
     }
 
     private class MovingFileVisitor extends SimpleFileVisitor<Path> {
@@ -78,7 +86,7 @@ public class DirectorySplitter {
             Path targetFile = targetPath.resolve(sourceBasePath.relativize(sourcefile));
 
             if (dryRun) {
-                System.out.println(sourcefile.toString() + " --> " + targetFile.toString());
+                logger.log(sourcefile.toString() + " --> " + targetFile.toString());
             } else {
                 Files.move(sourcefile, targetFile, StandardCopyOption.ATOMIC_MOVE);
             }
