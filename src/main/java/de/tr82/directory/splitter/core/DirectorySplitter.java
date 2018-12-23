@@ -32,9 +32,24 @@ public class DirectorySplitter {
     }
 
     public void run() throws IOException {
+        checkParameters();
         printOperationInfo();
         Files.walkFileTree(sourceBasePath, new MovingFileVisitor());
         printOperationCompleted();
+    }
+
+    private void checkParameters() {
+        if (sourceBasePath == null || sourceBasePath.toString().isEmpty()) {
+            throw new IllegalArgumentException("Source path cannot be null or empty.");
+        }
+
+        if (targetBasePath == null || targetBasePath.toString().isEmpty()) {
+            throw new IllegalArgumentException("Target path cannot be null or empty.");
+        }
+
+        if (chunkNamePrefix == null || chunkNamePrefix.isEmpty()) {
+            throw new IllegalArgumentException("Chunk name prefix cannot be null or empty.");
+        }
     }
 
     private void printOperationInfo() {

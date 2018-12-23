@@ -4,48 +4,78 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
-public class Application extends JFrame {
+public class AppGui extends JFrame {
 
-    private JPanel contentPane;
     private JTextField txtSourceDir;
     private JTextField txtTargetDir;
-    private JButton btnChooseSourceDir;
-    private JButton btnChooseTargetDir;
-    private JLabel lblHeader;
-    private JLabel lblBucketNamePrefix;
     private JTextField txtBucketNamePrefix;
-    private JLabel lblFirstBucketSize;
     private JTextField txtFirstBucketSize;
     private JComboBox cmbFirstBucketSizeUnit;
-    private JLabel lblMaxBucketSize;
     private JTextField txtMaxBucketSize;
     private JComboBox cmbMaxBucketSizeUnit;
-    private JButton btnClose;
-    private JButton btnRun;
     private JCheckBox chkDryRun;
-    private JProgressBar progressBar;
-    private JTextArea textArea;
-    private JLabel lblDryRun;
+    private JTextArea logArea;
+    private JButton btnRun;
+    private JButton btnClose;
+
+    public AppGui() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+            UnsupportedLookAndFeelException {
+        configureFrame();
+        createContent();
+        registerListeners();
+    }
 
     /**
-     * Create the frame.
-     *
-     * @throws UnsupportedLookAndFeelException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws ClassNotFoundException
+     * Launch the application.
      */
-    public Application() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-            UnsupportedLookAndFeelException {
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                AppGui frame = new AppGui();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void configureFrame() throws ClassNotFoundException, UnsupportedLookAndFeelException,
+            InstantiationException, IllegalAccessException {
         setTitle("Directory Splitter");
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1000, 500);
-        contentPane = new JPanel();
+    }
+
+    private void createContent() {
+        final JPanel contentPane = createContentPane();
+        createHeader(contentPane);
+        txtSourceDir = createSourceDirControls(contentPane);
+        txtTargetDir = createDestDirControls(contentPane);
+        txtBucketNamePrefix = createBucketNamePrefixControls(contentPane);
+        txtFirstBucketSize = createFirstBucketSizeControls(contentPane);
+        cmbFirstBucketSizeUnit = createFirstBucketSizeUnitCombo(contentPane);
+        txtMaxBucketSize = createMaxBucketSizeControls(contentPane);
+        cmbMaxBucketSizeUnit = createMaxBucketSizeUnitCombo(contentPane);
+        chkDryRun = createDryRunControls(contentPane);
+        createProgressBar(contentPane);
+        btnRun = createRunButton(contentPane);
+        btnClose = createCloseButton(contentPane);
+        logArea = createLogArea(contentPane);
+    }
+
+    private void registerListeners() {
+        btnRun.addActionListener(new ExecutionActionListener());
+        btnClose.addActionListener((ActionEvent e) ->
+                AppGui.this.dispatchEvent(new WindowEvent(AppGui.this, WindowEvent.WINDOW_CLOSING)));
+    }
+
+    private JPanel createContentPane() {
+        final JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         GridBagLayout gbl_contentPane = new GridBagLayout();
@@ -55,8 +85,11 @@ public class Application extends JFrame {
         gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                 Double.MIN_VALUE};
         contentPane.setLayout(gbl_contentPane);
+        return contentPane;
+    }
 
-        lblHeader = new JLabel("Fill in the details and hit 'Run ...'");
+    private void createHeader(JPanel contentPane) {
+        final JLabel lblHeader = new JLabel("Fill in the details and hit 'Run ...'");
         lblHeader.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblHeader.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblHeader = new GridBagConstraints();
@@ -65,7 +98,9 @@ public class Application extends JFrame {
         gbc_lblHeader.gridx = 0;
         gbc_lblHeader.gridy = 0;
         contentPane.add(lblHeader, gbc_lblHeader);
+    }
 
+    private JTextField createSourceDirControls(JPanel contentPane) {
         JLabel lblSourceDir = new JLabel("Source directory:");
         GridBagConstraints gbc_lblSourceDir = new GridBagConstraints();
         gbc_lblSourceDir.anchor = GridBagConstraints.EAST;
@@ -74,7 +109,7 @@ public class Application extends JFrame {
         gbc_lblSourceDir.gridy = 1;
         contentPane.add(lblSourceDir, gbc_lblSourceDir);
 
-        txtSourceDir = new JTextField();
+        final JTextField txtSourceDir = new JTextField();
         txtSourceDir.setEditable(false);
         GridBagConstraints gbc_txtSourceDir = new GridBagConstraints();
         gbc_txtSourceDir.gridwidth = 3;
@@ -85,7 +120,7 @@ public class Application extends JFrame {
         contentPane.add(txtSourceDir, gbc_txtSourceDir);
         txtSourceDir.setColumns(10);
 
-        btnChooseSourceDir = new JButton("Choose ...");
+        final JButton btnChooseSourceDir = new JButton("Choose ...");
         GridBagConstraints gbc_btnChooseSourceDir = new GridBagConstraints();
         gbc_btnChooseSourceDir.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnChooseSourceDir.insets = new Insets(0, 0, 5, 0);
@@ -95,12 +130,16 @@ public class Application extends JFrame {
         btnChooseSourceDir.addActionListener((ActionEvent e) -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int result = fileChooser.showOpenDialog(Application.this);
+            int result = fileChooser.showOpenDialog(AppGui.this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 txtSourceDir.setText(fileChooser.getSelectedFile().toString());
             }
         });
 
+        return txtSourceDir;
+    }
+
+    private JTextField createDestDirControls(JPanel contentPane) {
         JLabel lblTargetDir = new JLabel("Target directory:");
         GridBagConstraints gbc_lblTargetDir = new GridBagConstraints();
         gbc_lblTargetDir.anchor = GridBagConstraints.EAST;
@@ -109,7 +148,7 @@ public class Application extends JFrame {
         gbc_lblTargetDir.gridy = 2;
         contentPane.add(lblTargetDir, gbc_lblTargetDir);
 
-        txtTargetDir = new JTextField();
+        final JTextField txtTargetDir = new JTextField();
         GridBagConstraints gbc_txtTargetDir = new GridBagConstraints();
         gbc_txtTargetDir.gridwidth = 3;
         gbc_txtTargetDir.insets = new Insets(0, 0, 5, 5);
@@ -119,7 +158,7 @@ public class Application extends JFrame {
         contentPane.add(txtTargetDir, gbc_txtTargetDir);
         txtTargetDir.setColumns(10);
 
-        btnChooseTargetDir = new JButton("Choose ...");
+        final JButton btnChooseTargetDir = new JButton("Choose ...");
         GridBagConstraints gbc_btnChooseTargetDir = new GridBagConstraints();
         gbc_btnChooseTargetDir.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnChooseTargetDir.insets = new Insets(0, 0, 5, 0);
@@ -129,13 +168,16 @@ public class Application extends JFrame {
         btnChooseTargetDir.addActionListener((ActionEvent e) -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int result = fileChooser.showOpenDialog(Application.this);
+            int result = fileChooser.showOpenDialog(AppGui.this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 txtTargetDir.setText(fileChooser.getSelectedFile().toString());
             }
         });
+        return txtTargetDir;
+    }
 
-        lblBucketNamePrefix = new JLabel("Bucket name prefix:");
+    private JTextField createBucketNamePrefixControls(JPanel contentPane) {
+        final JLabel lblBucketNamePrefix = new JLabel("Bucket name prefix:");
         GridBagConstraints gbc_lblBucketNamePrefix = new GridBagConstraints();
         gbc_lblBucketNamePrefix.anchor = GridBagConstraints.EAST;
         gbc_lblBucketNamePrefix.insets = new Insets(0, 0, 5, 5);
@@ -143,7 +185,7 @@ public class Application extends JFrame {
         gbc_lblBucketNamePrefix.gridy = 3;
         contentPane.add(lblBucketNamePrefix, gbc_lblBucketNamePrefix);
 
-        txtBucketNamePrefix = new JTextField();
+        final JTextField txtBucketNamePrefix = new JTextField();
         txtBucketNamePrefix.setText("RAWBLU_");
         GridBagConstraints gbc_txtBucketNamePrefix = new GridBagConstraints();
         gbc_txtBucketNamePrefix.gridwidth = 3;
@@ -153,8 +195,11 @@ public class Application extends JFrame {
         gbc_txtBucketNamePrefix.gridy = 3;
         contentPane.add(txtBucketNamePrefix, gbc_txtBucketNamePrefix);
         txtBucketNamePrefix.setColumns(10);
+        return txtBucketNamePrefix;
+    }
 
-        lblFirstBucketSize = new JLabel("First bucket size:");
+    private JTextField createFirstBucketSizeControls(JPanel contentPane) {
+        JLabel lblFirstBucketSize = new JLabel("First bucket size:");
         GridBagConstraints gbc_lblFirstBucketSize = new GridBagConstraints();
         gbc_lblFirstBucketSize.anchor = GridBagConstraints.EAST;
         gbc_lblFirstBucketSize.insets = new Insets(0, 0, 5, 5);
@@ -162,7 +207,7 @@ public class Application extends JFrame {
         gbc_lblFirstBucketSize.gridy = 4;
         contentPane.add(lblFirstBucketSize, gbc_lblFirstBucketSize);
 
-        txtFirstBucketSize = new JTextField();
+        JTextField txtFirstBucketSize = new JTextField();
         txtFirstBucketSize.setText("23");
         GridBagConstraints gbc_txtFirstBucketSize = new GridBagConstraints();
         gbc_txtFirstBucketSize.gridwidth = 3;
@@ -172,10 +217,13 @@ public class Application extends JFrame {
         gbc_txtFirstBucketSize.gridy = 4;
         contentPane.add(txtFirstBucketSize, gbc_txtFirstBucketSize);
         txtFirstBucketSize.setColumns(10);
+        return txtFirstBucketSize;
+    }
 
-        cmbFirstBucketSizeUnit = new JComboBox();
+    private JComboBox createFirstBucketSizeUnitCombo(JPanel contentPane) {
+        final JComboBox<String> cmbFirstBucketSizeUnit = new JComboBox<>();
         cmbFirstBucketSizeUnit
-                .setModel(new DefaultComboBoxModel(new String[]{"Bytes", "KBytes", "MBytes", "GBytes"}));
+                .setModel(new DefaultComboBoxModel<>(new String[]{"Bytes", "KBytes", "MBytes", "GBytes"}));
         cmbFirstBucketSizeUnit.setSelectedIndex(3);
         GridBagConstraints gbc_cmbFirstBucketSizeUnit = new GridBagConstraints();
         gbc_cmbFirstBucketSizeUnit.insets = new Insets(0, 0, 5, 0);
@@ -183,8 +231,11 @@ public class Application extends JFrame {
         gbc_cmbFirstBucketSizeUnit.gridx = 4;
         gbc_cmbFirstBucketSizeUnit.gridy = 4;
         contentPane.add(cmbFirstBucketSizeUnit, gbc_cmbFirstBucketSizeUnit);
+        return cmbFirstBucketSizeUnit;
+    }
 
-        lblMaxBucketSize = new JLabel("Max bucket size:");
+    private JTextField createMaxBucketSizeControls(JPanel contentPane) {
+        final JLabel lblMaxBucketSize = new JLabel("Max bucket size:");
         GridBagConstraints gbc_lblMaxBucketSize = new GridBagConstraints();
         gbc_lblMaxBucketSize.anchor = GridBagConstraints.EAST;
         gbc_lblMaxBucketSize.insets = new Insets(0, 0, 5, 5);
@@ -192,7 +243,7 @@ public class Application extends JFrame {
         gbc_lblMaxBucketSize.gridy = 5;
         contentPane.add(lblMaxBucketSize, gbc_lblMaxBucketSize);
 
-        txtMaxBucketSize = new JTextField();
+        final JTextField txtMaxBucketSize = new JTextField();
         txtMaxBucketSize.setText("23");
         GridBagConstraints gbc_txtMaxBucketSize = new GridBagConstraints();
         gbc_txtMaxBucketSize.gridwidth = 3;
@@ -202,9 +253,12 @@ public class Application extends JFrame {
         gbc_txtMaxBucketSize.gridy = 5;
         contentPane.add(txtMaxBucketSize, gbc_txtMaxBucketSize);
         txtMaxBucketSize.setColumns(10);
+        return txtMaxBucketSize;
+    }
 
-        cmbMaxBucketSizeUnit = new JComboBox();
-        cmbMaxBucketSizeUnit.setModel(new DefaultComboBoxModel(new String[]{"Bytes", "KBytes", "MBytes", "GBytes"}));
+    private JComboBox createMaxBucketSizeUnitCombo(JPanel contentPane) {
+        final JComboBox<String> cmbMaxBucketSizeUnit = new JComboBox<>();
+        cmbMaxBucketSizeUnit.setModel(new DefaultComboBoxModel<>(new String[]{"Bytes", "KBytes", "MBytes", "GBytes"}));
         cmbMaxBucketSizeUnit.setSelectedIndex(3);
         GridBagConstraints gbc_cmbMaxBucketSizeUnit = new GridBagConstraints();
         gbc_cmbMaxBucketSizeUnit.insets = new Insets(0, 0, 5, 0);
@@ -212,15 +266,18 @@ public class Application extends JFrame {
         gbc_cmbMaxBucketSizeUnit.gridx = 4;
         gbc_cmbMaxBucketSizeUnit.gridy = 5;
         contentPane.add(cmbMaxBucketSizeUnit, gbc_cmbMaxBucketSizeUnit);
+        return cmbMaxBucketSizeUnit;
+    }
 
-        lblDryRun = new JLabel("Dry run:");
+    private JCheckBox createDryRunControls(JPanel contentPane) {
+        final JLabel lblDryRun = new JLabel("Dry run:");
         GridBagConstraints gbc_lblDryRun = new GridBagConstraints();
         gbc_lblDryRun.insets = new Insets(0, 0, 5, 5);
         gbc_lblDryRun.gridx = 0;
         gbc_lblDryRun.gridy = 6;
         contentPane.add(lblDryRun, gbc_lblDryRun);
 
-        chkDryRun = new JCheckBox("");
+        final JCheckBox chkDryRun = new JCheckBox("");
         chkDryRun.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_chkDryRun = new GridBagConstraints();
         gbc_chkDryRun.anchor = GridBagConstraints.WEST;
@@ -228,8 +285,11 @@ public class Application extends JFrame {
         gbc_chkDryRun.gridx = 1;
         gbc_chkDryRun.gridy = 6;
         contentPane.add(chkDryRun, gbc_chkDryRun);
+        return chkDryRun;
+    }
 
-        progressBar = new JProgressBar();
+    private void createProgressBar(JPanel contentPane) {
+        final JProgressBar progressBar = new JProgressBar();
         GridBagConstraints gbc_progressBar = new GridBagConstraints();
         gbc_progressBar.fill = GridBagConstraints.BOTH;
         gbc_progressBar.insets = new Insets(0, 0, 5, 5);
@@ -237,43 +297,32 @@ public class Application extends JFrame {
         gbc_progressBar.gridx = 0;
         gbc_progressBar.gridy = 7;
         contentPane.add(progressBar, gbc_progressBar);
+    }
 
-        btnRun = new JButton("Run ...");
+    private JButton createRunButton(JPanel contentPane) {
+        final JButton btnRun = new JButton("Run ...");
         GridBagConstraints gbc_btnRun = new GridBagConstraints();
         gbc_btnRun.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnRun.insets = new Insets(0, 0, 5, 5);
         gbc_btnRun.gridx = 3;
         gbc_btnRun.gridy = 7;
         contentPane.add(btnRun, gbc_btnRun);
-        btnRun.addActionListener((ActionEvent e) -> {
-            long firstBucketSize = determineBucketSize(txtFirstBucketSize.getText(), cmbFirstBucketSizeUnit.getSelectedItem());
-            long maxBucketSize = determineBucketSize(txtMaxBucketSize.getText(), cmbMaxBucketSizeUnit.getSelectedItem());
-            DirectorySplitter directorySplitter = new DirectorySplitter(txtSourceDir.getText(), txtTargetDir.getText(), txtBucketNamePrefix.getText(),
-                    firstBucketSize, maxBucketSize, chkDryRun.isSelected(), new DirectorySplitter.OperationLogger() {
-                @Override
-                public void log(String message) {
-                    textArea.append(message + "\n");
-                }
-            });
-            try {
-                directorySplitter.run();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
+        return btnRun;
+    }
 
-        btnClose = new JButton("Close");
+    private JButton createCloseButton(JPanel contentPane) {
+        final JButton btnClose = new JButton("Close");
         GridBagConstraints gbc_btnClose = new GridBagConstraints();
         gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnClose.insets = new Insets(0, 0, 5, 0);
         gbc_btnClose.gridx = 4;
         gbc_btnClose.gridy = 7;
         contentPane.add(btnClose, gbc_btnClose);
-        btnClose.addActionListener((ActionEvent e) -> {
-            Application.this.dispatchEvent(new WindowEvent(Application.this, WindowEvent.WINDOW_CLOSING));
-        });
+        return btnClose;
+    }
 
-        textArea = new JTextArea();
+    private JTextArea createLogArea(JPanel contentPane) {
+        final JTextArea textArea = new JTextArea();
 
         JScrollPane scroll = new JScrollPane(textArea);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -286,37 +335,43 @@ public class Application extends JFrame {
         gbc_textArea.gridx = 0;
         gbc_textArea.gridy = 8;
         contentPane.add(scroll, gbc_textArea);
+
+        return textArea;
     }
 
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Application frame = new Application();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private class ExecutionActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            logArea.setText(null);
+
+            long firstBucketSize = calculateBucketSize(txtFirstBucketSize.getText(), cmbFirstBucketSizeUnit.getSelectedItem());
+            long maxBucketSize = calculateBucketSize(txtMaxBucketSize.getText(), cmbMaxBucketSizeUnit.getSelectedItem());
+
+            DirectorySplitter directorySplitter = new DirectorySplitter(txtSourceDir.getText(), txtTargetDir.getText(), txtBucketNamePrefix.getText(),
+                    firstBucketSize, maxBucketSize, chkDryRun.isSelected(), (String message) -> logArea.append(message + "\n"));
+
+            try {
+                directorySplitter.run();
+            } catch (Exception e) {
+                logArea.setText("ERROR: Operation failed!\n");
+                logArea.append(e.getMessage());
             }
-        });
-    }
-
-    private long determineBucketSize(String bucketSize, Object bucketSizeUnit) {
-        long result = Long.valueOf(bucketSize);
-        if ("KBytes".equals(bucketSizeUnit)) {
-            result *= 1024;
-        }
-        if ("MBytes".equals(bucketSizeUnit)) {
-            result *= 1024 * 1024;
-        }
-        if ("GBytes".equals(bucketSizeUnit)) {
-            result *= 1024 * 1024 * 1024;
         }
 
-        return result;
+        private long calculateBucketSize(String bucketSize, Object bucketSizeUnit) {
+            long result = Long.valueOf(bucketSize);
+            if ("KBytes".equals(bucketSizeUnit)) {
+                result *= 1024;
+            }
+            if ("MBytes".equals(bucketSizeUnit)) {
+                result *= 1024 * 1024;
+            }
+            if ("GBytes".equals(bucketSizeUnit)) {
+                result *= 1024 * 1024 * 1024;
+            }
+
+            return result;
+        }
     }
 }

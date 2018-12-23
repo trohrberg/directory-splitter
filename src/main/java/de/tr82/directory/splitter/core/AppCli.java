@@ -2,7 +2,7 @@ package de.tr82.directory.splitter.core;
 
 import java.io.IOException;
 
-public class Main {
+public class AppCli {
 
     public static void main(String[] args) throws IOException {
         if (args.length != 3) {
@@ -15,12 +15,7 @@ public class Main {
         final String targetBasePath = args[1];
 
         DirectorySplitter splitter = new DirectorySplitter(sourceBasePath, targetBasePath, "RAWBLU_",
-                parseChunkSize("1.0G"), parseChunkSize(args[2]), true, new DirectorySplitter.OperationLogger() {
-            @Override
-            public void log(String message) {
-                System.out.println(message);
-            }
-        });
+                parseChunkSize("1.0G"), parseChunkSize(args[2]), true, System.out::println);
         splitter.run();
     }
 
