@@ -9,6 +9,7 @@ public class DirectorySplitter {
     private final Path sourceBasePath;
     private final Path targetBasePath;
     private final String chunkNamePrefix;
+    private final int firstChunkIndex;
     private final long firstChunkSize;
     private final long maxChunkSize;
 
@@ -20,15 +21,17 @@ public class DirectorySplitter {
     private int chunkNum = 1;
 
     public DirectorySplitter(final String sourceBasePath, final String targetBasePath, final String chunkNamePrefix,
-                             final long firstChunkSize, final long maxChunkSize, final boolean dryRun,
-                             final OperationLogger logger) {
+                             final int firstChunkIndex, final long firstChunkSize, final long maxChunkSize,
+                             final boolean dryRun, final OperationLogger logger) {
         this.sourceBasePath = FileSystems.getDefault().getPath(sourceBasePath);
         this.targetBasePath = FileSystems.getDefault().getPath(targetBasePath);
         this.chunkNamePrefix = chunkNamePrefix;
+        this.firstChunkIndex = firstChunkIndex;
         this.firstChunkSize = firstChunkSize;
         this.maxChunkSize = maxChunkSize;
         this.dryRun = dryRun;
         this.logger = logger;
+        this.chunkNum = firstChunkIndex;
     }
 
     public void run() throws IOException {
@@ -50,6 +53,10 @@ public class DirectorySplitter {
         if (chunkNamePrefix == null || chunkNamePrefix.isEmpty()) {
             throw new IllegalArgumentException("Chunk name prefix cannot be null or empty.");
         }
+
+        if (firstChunkIndex < 0) {
+            throw new IllegalArgumentException("First chunk index cannot be less then 0.");
+        }
     }
 
     private void printOperationInfo() {
@@ -60,6 +67,7 @@ public class DirectorySplitter {
         logger.log("Selected source directory    : " + sourceBasePath.toString());
         logger.log("Selected target directory    : " + targetBasePath.toString());
         logger.log("Naming convention of buckets : " + chunkNamePrefix + "###");
+        logger.log("Starting with bucket         : " + chunkNamePrefix + String.format("%03d", firstChunkIndex));
         logger.log("");
 
         if (dryRun) {
@@ -73,9 +81,9 @@ public class DirectorySplitter {
         logger.log("");
 
         if (dryRun) {
-            logger.log("Simulation completed: " + chunkNum + " buckets would have been created.");
+            logger.log("Simulation completed: " + (chunkNum - firstChunkIndex + 1) + " buckets would have been created.");
         } else {
-            logger.log("Operation completed: " + chunkNum + " buckets have been created.");
+            logger.log("Operation completed: " + (chunkNum - firstChunkIndex + 1) + " buckets have been created.");
         }
     }
 

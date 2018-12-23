@@ -12,6 +12,7 @@ public class AppGui extends JFrame {
     private JTextField txtSourceDir;
     private JTextField txtTargetDir;
     private JTextField txtBucketNamePrefix;
+    private JTextField txtFirstBucketIndex;
     private JTextField txtFirstBucketSize;
     private JComboBox cmbFirstBucketSizeUnit;
     private JTextField txtMaxBucketSize;
@@ -28,9 +29,6 @@ public class AppGui extends JFrame {
         registerListeners();
     }
 
-    /**
-     * Launch the application.
-     */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
@@ -57,6 +55,7 @@ public class AppGui extends JFrame {
         txtSourceDir = createSourceDirControls(contentPane);
         txtTargetDir = createDestDirControls(contentPane);
         txtBucketNamePrefix = createBucketNamePrefixControls(contentPane);
+        txtFirstBucketIndex = createFirstBucketIndexControls(contentPane);
         txtFirstBucketSize = createFirstBucketSizeControls(contentPane);
         cmbFirstBucketSizeUnit = createFirstBucketSizeUnitCombo(contentPane);
         txtMaxBucketSize = createMaxBucketSizeControls(contentPane);
@@ -79,11 +78,10 @@ public class AppGui extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         GridBagLayout gbl_contentPane = new GridBagLayout();
-        gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0, 0};
-        gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0};
+        gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0};
-        gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-                Double.MIN_VALUE};
+        gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
         contentPane.setLayout(gbl_contentPane);
         return contentPane;
     }
@@ -93,7 +91,7 @@ public class AppGui extends JFrame {
         lblHeader.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblHeader.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblHeader = new GridBagConstraints();
-        gbc_lblHeader.gridwidth = 5;
+        gbc_lblHeader.gridwidth = 4;
         gbc_lblHeader.insets = new Insets(0, 0, 5, 0);
         gbc_lblHeader.gridx = 0;
         gbc_lblHeader.gridy = 0;
@@ -112,7 +110,7 @@ public class AppGui extends JFrame {
         final JTextField txtSourceDir = new JTextField();
         txtSourceDir.setEditable(false);
         GridBagConstraints gbc_txtSourceDir = new GridBagConstraints();
-        gbc_txtSourceDir.gridwidth = 3;
+        gbc_txtSourceDir.gridwidth = 2;
         gbc_txtSourceDir.insets = new Insets(0, 0, 5, 5);
         gbc_txtSourceDir.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtSourceDir.gridx = 1;
@@ -124,7 +122,7 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_btnChooseSourceDir = new GridBagConstraints();
         gbc_btnChooseSourceDir.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnChooseSourceDir.insets = new Insets(0, 0, 5, 0);
-        gbc_btnChooseSourceDir.gridx = 4;
+        gbc_btnChooseSourceDir.gridx = 3;
         gbc_btnChooseSourceDir.gridy = 1;
         contentPane.add(btnChooseSourceDir, gbc_btnChooseSourceDir);
         btnChooseSourceDir.addActionListener((ActionEvent e) -> {
@@ -150,7 +148,7 @@ public class AppGui extends JFrame {
 
         final JTextField txtTargetDir = new JTextField();
         GridBagConstraints gbc_txtTargetDir = new GridBagConstraints();
-        gbc_txtTargetDir.gridwidth = 3;
+        gbc_txtTargetDir.gridwidth = 2;
         gbc_txtTargetDir.insets = new Insets(0, 0, 5, 5);
         gbc_txtTargetDir.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtTargetDir.gridx = 1;
@@ -162,7 +160,7 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_btnChooseTargetDir = new GridBagConstraints();
         gbc_btnChooseTargetDir.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnChooseTargetDir.insets = new Insets(0, 0, 5, 0);
-        gbc_btnChooseTargetDir.gridx = 4;
+        gbc_btnChooseTargetDir.gridx = 3;
         gbc_btnChooseTargetDir.gridy = 2;
         contentPane.add(btnChooseTargetDir, gbc_btnChooseTargetDir);
         btnChooseTargetDir.addActionListener((ActionEvent e) -> {
@@ -188,7 +186,7 @@ public class AppGui extends JFrame {
         final JTextField txtBucketNamePrefix = new JTextField();
         txtBucketNamePrefix.setText("RAWBLU_");
         GridBagConstraints gbc_txtBucketNamePrefix = new GridBagConstraints();
-        gbc_txtBucketNamePrefix.gridwidth = 3;
+        gbc_txtBucketNamePrefix.gridwidth = 2;
         gbc_txtBucketNamePrefix.insets = new Insets(0, 0, 5, 5);
         gbc_txtBucketNamePrefix.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtBucketNamePrefix.gridx = 1;
@@ -198,23 +196,45 @@ public class AppGui extends JFrame {
         return txtBucketNamePrefix;
     }
 
+    private JTextField createFirstBucketIndexControls(JPanel contentPane) {
+        final JLabel lblFirstBucketIndex = new JLabel("First Bucket index:");
+        GridBagConstraints gbc_lblBucketNamePrefix = new GridBagConstraints();
+        gbc_lblBucketNamePrefix.anchor = GridBagConstraints.EAST;
+        gbc_lblBucketNamePrefix.insets = new Insets(0, 0, 5, 5);
+        gbc_lblBucketNamePrefix.gridx = 0;
+        gbc_lblBucketNamePrefix.gridy = 4;
+        contentPane.add(lblFirstBucketIndex, gbc_lblBucketNamePrefix);
+
+        final JTextField txtFirstBucketIndex = new JTextField();
+        txtFirstBucketIndex.setText("1");
+        GridBagConstraints gbc_txtBucketNamePrefix = new GridBagConstraints();
+        gbc_txtBucketNamePrefix.gridwidth = 2;
+        gbc_txtBucketNamePrefix.insets = new Insets(0, 0, 5, 5);
+        gbc_txtBucketNamePrefix.fill = GridBagConstraints.HORIZONTAL;
+        gbc_txtBucketNamePrefix.gridx = 1;
+        gbc_txtBucketNamePrefix.gridy = 4;
+        contentPane.add(txtFirstBucketIndex, gbc_txtBucketNamePrefix);
+        txtFirstBucketIndex.setColumns(10);
+        return txtFirstBucketIndex;
+    }
+
     private JTextField createFirstBucketSizeControls(JPanel contentPane) {
         JLabel lblFirstBucketSize = new JLabel("First bucket size:");
         GridBagConstraints gbc_lblFirstBucketSize = new GridBagConstraints();
         gbc_lblFirstBucketSize.anchor = GridBagConstraints.EAST;
         gbc_lblFirstBucketSize.insets = new Insets(0, 0, 5, 5);
         gbc_lblFirstBucketSize.gridx = 0;
-        gbc_lblFirstBucketSize.gridy = 4;
+        gbc_lblFirstBucketSize.gridy = 5;
         contentPane.add(lblFirstBucketSize, gbc_lblFirstBucketSize);
 
         JTextField txtFirstBucketSize = new JTextField();
         txtFirstBucketSize.setText("23");
         GridBagConstraints gbc_txtFirstBucketSize = new GridBagConstraints();
-        gbc_txtFirstBucketSize.gridwidth = 3;
+        gbc_txtFirstBucketSize.gridwidth = 2;
         gbc_txtFirstBucketSize.insets = new Insets(0, 0, 5, 5);
         gbc_txtFirstBucketSize.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtFirstBucketSize.gridx = 1;
-        gbc_txtFirstBucketSize.gridy = 4;
+        gbc_txtFirstBucketSize.gridy = 5;
         contentPane.add(txtFirstBucketSize, gbc_txtFirstBucketSize);
         txtFirstBucketSize.setColumns(10);
         return txtFirstBucketSize;
@@ -228,8 +248,8 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_cmbFirstBucketSizeUnit = new GridBagConstraints();
         gbc_cmbFirstBucketSizeUnit.insets = new Insets(0, 0, 5, 0);
         gbc_cmbFirstBucketSizeUnit.fill = GridBagConstraints.HORIZONTAL;
-        gbc_cmbFirstBucketSizeUnit.gridx = 4;
-        gbc_cmbFirstBucketSizeUnit.gridy = 4;
+        gbc_cmbFirstBucketSizeUnit.gridx = 3;
+        gbc_cmbFirstBucketSizeUnit.gridy = 5;
         contentPane.add(cmbFirstBucketSizeUnit, gbc_cmbFirstBucketSizeUnit);
         return cmbFirstBucketSizeUnit;
     }
@@ -240,17 +260,17 @@ public class AppGui extends JFrame {
         gbc_lblMaxBucketSize.anchor = GridBagConstraints.EAST;
         gbc_lblMaxBucketSize.insets = new Insets(0, 0, 5, 5);
         gbc_lblMaxBucketSize.gridx = 0;
-        gbc_lblMaxBucketSize.gridy = 5;
+        gbc_lblMaxBucketSize.gridy = 6;
         contentPane.add(lblMaxBucketSize, gbc_lblMaxBucketSize);
 
         final JTextField txtMaxBucketSize = new JTextField();
         txtMaxBucketSize.setText("23");
         GridBagConstraints gbc_txtMaxBucketSize = new GridBagConstraints();
-        gbc_txtMaxBucketSize.gridwidth = 3;
+        gbc_txtMaxBucketSize.gridwidth = 2;
         gbc_txtMaxBucketSize.insets = new Insets(0, 0, 5, 5);
         gbc_txtMaxBucketSize.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtMaxBucketSize.gridx = 1;
-        gbc_txtMaxBucketSize.gridy = 5;
+        gbc_txtMaxBucketSize.gridy = 6;
         contentPane.add(txtMaxBucketSize, gbc_txtMaxBucketSize);
         txtMaxBucketSize.setColumns(10);
         return txtMaxBucketSize;
@@ -263,8 +283,8 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_cmbMaxBucketSizeUnit = new GridBagConstraints();
         gbc_cmbMaxBucketSizeUnit.insets = new Insets(0, 0, 5, 0);
         gbc_cmbMaxBucketSizeUnit.fill = GridBagConstraints.HORIZONTAL;
-        gbc_cmbMaxBucketSizeUnit.gridx = 4;
-        gbc_cmbMaxBucketSizeUnit.gridy = 5;
+        gbc_cmbMaxBucketSizeUnit.gridx = 3;
+        gbc_cmbMaxBucketSizeUnit.gridy = 6;
         contentPane.add(cmbMaxBucketSizeUnit, gbc_cmbMaxBucketSizeUnit);
         return cmbMaxBucketSizeUnit;
     }
@@ -274,7 +294,7 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_lblDryRun = new GridBagConstraints();
         gbc_lblDryRun.insets = new Insets(0, 0, 5, 5);
         gbc_lblDryRun.gridx = 0;
-        gbc_lblDryRun.gridy = 6;
+        gbc_lblDryRun.gridy = 7;
         contentPane.add(lblDryRun, gbc_lblDryRun);
 
         final JCheckBox chkDryRun = new JCheckBox("");
@@ -283,7 +303,7 @@ public class AppGui extends JFrame {
         gbc_chkDryRun.anchor = GridBagConstraints.WEST;
         gbc_chkDryRun.insets = new Insets(0, 0, 5, 5);
         gbc_chkDryRun.gridx = 1;
-        gbc_chkDryRun.gridy = 6;
+        gbc_chkDryRun.gridy = 7;
         contentPane.add(chkDryRun, gbc_chkDryRun);
         return chkDryRun;
     }
@@ -291,11 +311,11 @@ public class AppGui extends JFrame {
     private void createProgressBar(JPanel contentPane) {
         final JProgressBar progressBar = new JProgressBar();
         GridBagConstraints gbc_progressBar = new GridBagConstraints();
-        gbc_progressBar.fill = GridBagConstraints.BOTH;
+        gbc_progressBar.fill = GridBagConstraints.HORIZONTAL;
         gbc_progressBar.insets = new Insets(0, 0, 5, 5);
-        gbc_progressBar.gridwidth = 3;
+        gbc_progressBar.gridwidth = 2;
         gbc_progressBar.gridx = 0;
-        gbc_progressBar.gridy = 7;
+        gbc_progressBar.gridy = 8;
         contentPane.add(progressBar, gbc_progressBar);
     }
 
@@ -304,8 +324,8 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_btnRun = new GridBagConstraints();
         gbc_btnRun.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnRun.insets = new Insets(0, 0, 5, 5);
-        gbc_btnRun.gridx = 3;
-        gbc_btnRun.gridy = 7;
+        gbc_btnRun.gridx = 2;
+        gbc_btnRun.gridy = 8;
         contentPane.add(btnRun, gbc_btnRun);
         return btnRun;
     }
@@ -315,8 +335,8 @@ public class AppGui extends JFrame {
         GridBagConstraints gbc_btnClose = new GridBagConstraints();
         gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnClose.insets = new Insets(0, 0, 5, 0);
-        gbc_btnClose.gridx = 4;
-        gbc_btnClose.gridy = 7;
+        gbc_btnClose.gridx = 3;
+        gbc_btnClose.gridy = 8;
         contentPane.add(btnClose, gbc_btnClose);
         return btnClose;
     }
@@ -329,11 +349,10 @@ public class AppGui extends JFrame {
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         GridBagConstraints gbc_textArea = new GridBagConstraints();
-        gbc_textArea.gridheight = 2;
-        gbc_textArea.gridwidth = 5;
+        gbc_textArea.gridwidth = 4;
         gbc_textArea.fill = GridBagConstraints.BOTH;
         gbc_textArea.gridx = 0;
-        gbc_textArea.gridy = 8;
+        gbc_textArea.gridy = 9;
         contentPane.add(scroll, gbc_textArea);
 
         return textArea;
@@ -347,9 +366,10 @@ public class AppGui extends JFrame {
 
             long firstBucketSize = calculateBucketSize(txtFirstBucketSize.getText(), cmbFirstBucketSizeUnit.getSelectedItem());
             long maxBucketSize = calculateBucketSize(txtMaxBucketSize.getText(), cmbMaxBucketSizeUnit.getSelectedItem());
+            int firstBucketIndex = Integer.valueOf(txtFirstBucketIndex.getText());
 
             DirectorySplitter directorySplitter = new DirectorySplitter(txtSourceDir.getText(), txtTargetDir.getText(), txtBucketNamePrefix.getText(),
-                    firstBucketSize, maxBucketSize, chkDryRun.isSelected(), (String message) -> logArea.append(message + "\n"));
+                    firstBucketIndex, firstBucketSize, maxBucketSize, chkDryRun.isSelected(), (String message) -> logArea.append(message + "\n"));
 
             try {
                 directorySplitter.run();

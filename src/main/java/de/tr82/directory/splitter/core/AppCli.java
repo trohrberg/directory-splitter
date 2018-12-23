@@ -15,7 +15,7 @@ public class AppCli {
         final String targetBasePath = args[1];
 
         DirectorySplitter splitter = new DirectorySplitter(sourceBasePath, targetBasePath, "RAWBLU_",
-                parseChunkSize("1.0G"), parseChunkSize(args[2]), true, System.out::println);
+                1, parseChunkSize("1.0G"), parseChunkSize(args[2]), true, System.out::println);
         splitter.run();
     }
 
