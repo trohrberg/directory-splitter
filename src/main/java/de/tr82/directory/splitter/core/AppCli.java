@@ -1,5 +1,7 @@
 package de.tr82.directory.splitter.core;
 
+import de.tr82.directory.splitter.core.old.DirectorySplitter;
+
 import java.io.IOException;
 
 public class AppCli {
