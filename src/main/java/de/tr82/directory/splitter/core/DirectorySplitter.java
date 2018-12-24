@@ -8,16 +8,24 @@ import java.nio.file.StandardCopyOption;
 public class DirectorySplitter {
     private final Path sourceBasePath;
     private final Path targetBasePath;
+    private final String bucketNamePrefix;
     private final long bucketSizeMax;
 
     private int currentBucketNo = 1;
     private long currentBucketSpaceLeft;
 
-    public DirectorySplitter(final Path sourceFolder, final Path targetFolder, final long bucketSizeMax) {
-        this.sourceBasePath = sourceFolder;
-        this.targetBasePath = targetFolder;
+    public DirectorySplitter(final Path sourceBaseFolder, final Path targetBaseFolder, final String bucketNamePrefix,
+                             final long bucketSizeMax) {
+        this(sourceBaseFolder, targetBaseFolder, bucketNamePrefix, bucketSizeMax, bucketSizeMax);
+    }
+
+    public DirectorySplitter(final Path sourceBaseFolder, final Path targetBaseFolder, final String bucketNamePrefix,
+                             final long firstBucketSizeMax, final long bucketSizeMax) {
+        this.sourceBasePath = sourceBaseFolder;
+        this.targetBasePath = targetBaseFolder;
+        this.bucketNamePrefix = bucketNamePrefix;
         this.bucketSizeMax = bucketSizeMax;
-        this.currentBucketSpaceLeft = bucketSizeMax;
+        this.currentBucketSpaceLeft = firstBucketSizeMax;
     }
 
     public void run() throws IOException {
@@ -34,7 +42,7 @@ public class DirectorySplitter {
             currentBucketNo++;
         }
 
-        Path targetPath = targetBasePath.resolve("bucket_" + String.format("%03d", currentBucketNo));
+        Path targetPath = targetBasePath.resolve(bucketNamePrefix + String.format("%03d", currentBucketNo));
         Path targetFile = targetPath.resolve(sourceBasePath.relativize(sourcePath));
 
         try {
