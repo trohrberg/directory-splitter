@@ -52,6 +52,9 @@ public class DirectorySplitter {
                 .filter(path -> Files.isRegularFile(path))
                 .sorted()
                 .forEach(this::handlePath);
+        if (Files.list(sourceBasePath).findAny().isPresent()) {
+            Files.walk(sourceBasePath).forEach((Path path) -> path.toFile().delete());
+        }
 
         printOperationResult();
     }
@@ -101,7 +104,7 @@ public class DirectorySplitter {
 
         if (!dryRun) {
             try {
-                targetPath.toFile().mkdir();
+                targetFile.getParent().toFile().mkdirs();
                 Files.move(sourcePath, targetFile, StandardCopyOption.ATOMIC_MOVE);
             } catch (IOException e) {
                 throw new RuntimeException(e);

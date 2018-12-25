@@ -17,8 +17,8 @@ public class AppGui extends JFrame {
     private JTextField txtFirstBucketIndex;
     private JTextField txtFirstBucketSpaceLeft;
     private JComboBox cmbFirstBucketSpaceLeftUnit;
-    private JTextField txtMaxBucketSize;
-    private JComboBox cmbMaxBucketSizeUnit;
+    private JTextField txtBucketSizeMax;
+    private JComboBox cmbBucketSizeMaxUnit;
     private JCheckBox chkDryRun;
     private JTextArea logArea;
     private JButton btnRun;
@@ -58,10 +58,10 @@ public class AppGui extends JFrame {
         txtTargetDir = createDestDirControls(contentPane);
         txtBucketNamePrefix = createBucketNamePrefixControls(contentPane);
         txtFirstBucketIndex = createFirstBucketIndexControls(contentPane);
-        txtFirstBucketSpaceLeft = createFirstBucketSizeControls(contentPane);
-        cmbFirstBucketSpaceLeftUnit = createFirstBucketSizeUnitCombo(contentPane);
-        txtMaxBucketSize = createMaxBucketSizeControls(contentPane);
-        cmbMaxBucketSizeUnit = createMaxBucketSizeUnitCombo(contentPane);
+        txtFirstBucketSpaceLeft = createFirstBucketSpaceLeftControls(contentPane);
+        cmbFirstBucketSpaceLeftUnit = createFirstBucketSpaceLeftUnitCombo(contentPane);
+        txtBucketSizeMax = createBucketSizeMaxControls(contentPane);
+        cmbBucketSizeMaxUnit = createBucketSizeMaxUnitCombo(contentPane);
         chkDryRun = createDryRunControls(contentPane);
         createProgressBar(contentPane);
         btnRun = createRunButton(contentPane);
@@ -220,8 +220,8 @@ public class AppGui extends JFrame {
         return txtFirstBucketIndex;
     }
 
-    private JTextField createFirstBucketSizeControls(JPanel contentPane) {
-        JLabel lblFirstBucketSize = new JLabel("First bucket size:");
+    private JTextField createFirstBucketSpaceLeftControls(JPanel contentPane) {
+        JLabel lblFirstBucketSize = new JLabel("First bucket space left:");
         GridBagConstraints gbc_lblFirstBucketSize = new GridBagConstraints();
         gbc_lblFirstBucketSize.anchor = GridBagConstraints.EAST;
         gbc_lblFirstBucketSize.insets = new Insets(0, 0, 5, 5);
@@ -242,7 +242,7 @@ public class AppGui extends JFrame {
         return txtFirstBucketSize;
     }
 
-    private JComboBox createFirstBucketSizeUnitCombo(JPanel contentPane) {
+    private JComboBox createFirstBucketSpaceLeftUnitCombo(JPanel contentPane) {
         final JComboBox<String> cmbFirstBucketSizeUnit = new JComboBox<>();
         cmbFirstBucketSizeUnit
                 .setModel(new DefaultComboBoxModel<>(new String[]{"Bytes", "KBytes", "MBytes", "GBytes"}));
@@ -256,7 +256,7 @@ public class AppGui extends JFrame {
         return cmbFirstBucketSizeUnit;
     }
 
-    private JTextField createMaxBucketSizeControls(JPanel contentPane) {
+    private JTextField createBucketSizeMaxControls(JPanel contentPane) {
         final JLabel lblMaxBucketSize = new JLabel("Max bucket size:");
         GridBagConstraints gbc_lblMaxBucketSize = new GridBagConstraints();
         gbc_lblMaxBucketSize.anchor = GridBagConstraints.EAST;
@@ -278,7 +278,7 @@ public class AppGui extends JFrame {
         return txtMaxBucketSize;
     }
 
-    private JComboBox createMaxBucketSizeUnitCombo(JPanel contentPane) {
+    private JComboBox createBucketSizeMaxUnitCombo(JPanel contentPane) {
         final JComboBox<String> cmbMaxBucketSizeUnit = new JComboBox<>();
         cmbMaxBucketSizeUnit.setModel(new DefaultComboBoxModel<>(new String[]{"Bytes", "KBytes", "MBytes", "GBytes"}));
         cmbMaxBucketSizeUnit.setSelectedIndex(3);
@@ -322,7 +322,7 @@ public class AppGui extends JFrame {
     }
 
     private JButton createRunButton(JPanel contentPane) {
-        final JButton btnRun = new JButton("Run ...");
+        final JButton btnRun = new JButton("Run");
         GridBagConstraints gbc_btnRun = new GridBagConstraints();
         gbc_btnRun.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnRun.insets = new Insets(0, 0, 5, 5);
@@ -369,7 +369,7 @@ public class AppGui extends JFrame {
             final Path sourceBasePath = new File(txtSourceDir.getText()).toPath();
             final Path targetBasePath = new File(txtTargetDir.getText()).toPath();
             long firstBucketSpaceLeft = calculateBucketSize(txtFirstBucketSpaceLeft.getText(), cmbFirstBucketSpaceLeftUnit.getSelectedItem());
-            long bucketSizeMax = calculateBucketSize(txtMaxBucketSize.getText(), cmbMaxBucketSizeUnit.getSelectedItem());
+            long bucketSizeMax = calculateBucketSize(txtBucketSizeMax.getText(), cmbBucketSizeMaxUnit.getSelectedItem());
             int firstBucketIndex = Integer.valueOf(txtFirstBucketIndex.getText());
 
             DirectorySplitter directorySplitter = new DirectorySplitter(sourceBasePath, targetBasePath, txtBucketNamePrefix.getText(),
