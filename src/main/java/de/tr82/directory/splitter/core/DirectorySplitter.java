@@ -70,7 +70,7 @@ public class DirectorySplitter {
         logger.accept("");
 
         if (dryRun) {
-            logger.accept("Drun run selected - the following operations are just simulated!");
+            logger.accept("Dry run selected - the following operations are just simulated!");
             logger.accept("");
         }
     }
