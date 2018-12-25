@@ -1,13 +1,13 @@
 package de.tr82.directory.splitter.core;
 
-import de.tr82.directory.splitter.core.old.DirectorySplitter;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.nio.file.Path;
 
 public class AppGui extends JFrame {
 
@@ -15,8 +15,8 @@ public class AppGui extends JFrame {
     private JTextField txtTargetDir;
     private JTextField txtBucketNamePrefix;
     private JTextField txtFirstBucketIndex;
-    private JTextField txtFirstBucketSize;
-    private JComboBox cmbFirstBucketSizeUnit;
+    private JTextField txtFirstBucketSpaceLeft;
+    private JComboBox cmbFirstBucketSpaceLeftUnit;
     private JTextField txtMaxBucketSize;
     private JComboBox cmbMaxBucketSizeUnit;
     private JCheckBox chkDryRun;
@@ -58,8 +58,8 @@ public class AppGui extends JFrame {
         txtTargetDir = createDestDirControls(contentPane);
         txtBucketNamePrefix = createBucketNamePrefixControls(contentPane);
         txtFirstBucketIndex = createFirstBucketIndexControls(contentPane);
-        txtFirstBucketSize = createFirstBucketSizeControls(contentPane);
-        cmbFirstBucketSizeUnit = createFirstBucketSizeUnitCombo(contentPane);
+        txtFirstBucketSpaceLeft = createFirstBucketSizeControls(contentPane);
+        cmbFirstBucketSpaceLeftUnit = createFirstBucketSizeUnitCombo(contentPane);
         txtMaxBucketSize = createMaxBucketSizeControls(contentPane);
         cmbMaxBucketSizeUnit = createMaxBucketSizeUnitCombo(contentPane);
         chkDryRun = createDryRunControls(contentPane);
@@ -366,12 +366,15 @@ public class AppGui extends JFrame {
         public void actionPerformed(ActionEvent event) {
             logArea.setText(null);
 
-            long firstBucketSize = calculateBucketSize(txtFirstBucketSize.getText(), cmbFirstBucketSizeUnit.getSelectedItem());
-            long maxBucketSize = calculateBucketSize(txtMaxBucketSize.getText(), cmbMaxBucketSizeUnit.getSelectedItem());
+            final Path sourceBasePath = new File(txtSourceDir.getText()).toPath();
+            final Path targetBasePath = new File(txtTargetDir.getText()).toPath();
+            long firstBucketSpaceLeft = calculateBucketSize(txtFirstBucketSpaceLeft.getText(), cmbFirstBucketSpaceLeftUnit.getSelectedItem());
+            long bucketSizeMax = calculateBucketSize(txtMaxBucketSize.getText(), cmbMaxBucketSizeUnit.getSelectedItem());
             int firstBucketIndex = Integer.valueOf(txtFirstBucketIndex.getText());
 
-            DirectorySplitter directorySplitter = new DirectorySplitter(txtSourceDir.getText(), txtTargetDir.getText(), txtBucketNamePrefix.getText(),
-                    firstBucketIndex, firstBucketSize, maxBucketSize, chkDryRun.isSelected(), (String message) -> logArea.append(message + "\n"));
+            DirectorySplitter directorySplitter = new DirectorySplitter(sourceBasePath, targetBasePath, txtBucketNamePrefix.getText(),
+                    firstBucketIndex, firstBucketSpaceLeft, bucketSizeMax, chkDryRun.isSelected());
+            directorySplitter.setLogger((String s) -> logArea.append(s + "\n"));
 
             try {
                 directorySplitter.run();

@@ -1,8 +1,8 @@
 package de.tr82.directory.splitter.core;
 
-import de.tr82.directory.splitter.core.old.DirectorySplitter;
-
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class AppCli {
 
@@ -13,11 +13,11 @@ public class AppCli {
             return;
         }
 
-        final String sourceBasePath = args[0];
-        final String targetBasePath = args[1];
+        final Path sourceBasePath = new File(args[0]).toPath();
+        final Path targetBasePath = new File(args[1]).toPath();
 
         DirectorySplitter splitter = new DirectorySplitter(sourceBasePath, targetBasePath, "RAWBLU_",
-                1, parseChunkSize("1.0G"), parseChunkSize(args[2]), true, System.out::println);
+                1, parseChunkSize("1.0G"), parseChunkSize(args[2]), true);
         splitter.run();
     }
 
