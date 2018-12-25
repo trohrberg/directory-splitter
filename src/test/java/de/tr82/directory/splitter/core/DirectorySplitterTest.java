@@ -20,14 +20,14 @@ public class DirectorySplitterTest {
     @Test
     public void testWithThreeFilesIntoSameBucket() throws IOException {
         File sourceFile1 = tempSourceFolder.createBinaryFile("file1.bin", 333);
-        File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_001").toFile(), "file1.bin");
+        File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file1.bin");
         File sourceFile2 = tempSourceFolder.createBinaryFile("file2.bin", 333);
-        File targetFile2 = new File(tempTargetFolder.getPath().resolve("bucket_001").toFile(), "file2.bin");
+        File targetFile2 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file2.bin");
         File sourceFile3 = tempSourceFolder.createBinaryFile("file3.bin", 333);
-        File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_001").toFile(), "file3.bin");
+        File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file3.bin");
 
         DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
-                "bucket_", 1000);
+                "bucket_", 2, 1000);
         splitter.run();
 
         assertFalse(sourceFile1.exists());
@@ -41,14 +41,14 @@ public class DirectorySplitterTest {
     @Test
     public void testWithThreeFilesIntoSeparateBucketsEach() throws IOException {
         File sourceFile1 = tempSourceFolder.createBinaryFile("file1.bin", 1000);
-        File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_001").toFile(), "file1.bin");
+        File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_003").toFile(), "file1.bin");
         File sourceFile2 = tempSourceFolder.createBinaryFile("file2.bin", 1000);
-        File targetFile2 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file2.bin");
+        File targetFile2 = new File(tempTargetFolder.getPath().resolve("bucket_004").toFile(), "file2.bin");
         File sourceFile3 = tempSourceFolder.createBinaryFile("file3.bin", 1000);
-        File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_003").toFile(), "file3.bin");
+        File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_005").toFile(), "file3.bin");
 
         DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
-                "bucket_",1000);
+                "bucket_",3, 1000);
         splitter.run();
 
         assertFalse(sourceFile1.exists());
@@ -62,14 +62,14 @@ public class DirectorySplitterTest {
     @Test
     public void testWithThreeFilesIntoSeparateBucketsEachAndFirstBucketSmaller() throws IOException {
         File sourceFile1 = tempSourceFolder.createBinaryFile("file1.bin", 450);
-        File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_001").toFile(), "file1.bin");
+        File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_004").toFile(), "file1.bin");
         File sourceFile2 = tempSourceFolder.createBinaryFile("file2.bin", 490);
-        File targetFile2 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file2.bin");
+        File targetFile2 = new File(tempTargetFolder.getPath().resolve("bucket_005").toFile(), "file2.bin");
         File sourceFile3 = tempSourceFolder.createBinaryFile("file3.bin", 480);
-        File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file3.bin");
+        File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_005").toFile(), "file3.bin");
 
         DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
-                "bucket_", 500, 1000);
+                "bucket_", 4, 500, 1000);
         splitter.run();
 
         assertFalse(sourceFile1.exists());

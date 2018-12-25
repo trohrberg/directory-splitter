@@ -15,16 +15,17 @@ public class DirectorySplitter {
     private long currentBucketSpaceLeft;
 
     public DirectorySplitter(final Path sourceBaseFolder, final Path targetBaseFolder, final String bucketNamePrefix,
-                             final long bucketSizeMax) {
-        this(sourceBaseFolder, targetBaseFolder, bucketNamePrefix, bucketSizeMax, bucketSizeMax);
+                             final int firstBucketIndex, final long bucketSizeMax) {
+        this(sourceBaseFolder, targetBaseFolder, bucketNamePrefix, firstBucketIndex, bucketSizeMax, bucketSizeMax);
     }
 
     public DirectorySplitter(final Path sourceBaseFolder, final Path targetBaseFolder, final String bucketNamePrefix,
-                             final long firstBucketSpaceLeft, final long bucketSizeMax) {
+                             final int firstBucketIndex, final long firstBucketSpaceLeft, final long bucketSizeMax) {
         this.sourceBasePath = sourceBaseFolder;
         this.targetBasePath = targetBaseFolder;
         this.bucketNamePrefix = bucketNamePrefix;
         this.bucketSizeMax = bucketSizeMax;
+        this.currentBucketNo = firstBucketIndex;
         this.currentBucketSpaceLeft = firstBucketSpaceLeft;
     }
 
