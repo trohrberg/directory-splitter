@@ -26,7 +26,8 @@ public class DirectorySplitterTest {
         File sourceFile3 = tempSourceFolder.createBinaryFile("file3.bin", 333);
         File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_001").toFile(), "file3.bin");
 
-        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(), "bucket_", 1000);
+        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
+                "bucket_", 1000);
         splitter.run();
 
         assertFalse(sourceFile1.exists());
@@ -46,7 +47,8 @@ public class DirectorySplitterTest {
         File sourceFile3 = tempSourceFolder.createBinaryFile("file3.bin", 1000);
         File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_003").toFile(), "file3.bin");
 
-        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(), "bucket_",1000);
+        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
+                "bucket_",1000);
         splitter.run();
 
         assertFalse(sourceFile1.exists());
@@ -66,7 +68,8 @@ public class DirectorySplitterTest {
         File sourceFile3 = tempSourceFolder.createBinaryFile("file3.bin", 480);
         File targetFile3 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file3.bin");
 
-        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(), "bucket_", 500, 1000);
+        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
+                "bucket_", 500, 1000);
         splitter.run();
 
         assertFalse(sourceFile1.exists());

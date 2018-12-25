@@ -20,12 +20,12 @@ public class DirectorySplitter {
     }
 
     public DirectorySplitter(final Path sourceBaseFolder, final Path targetBaseFolder, final String bucketNamePrefix,
-                             final long firstBucketSizeMax, final long bucketSizeMax) {
+                             final long firstBucketSpaceLeft, final long bucketSizeMax) {
         this.sourceBasePath = sourceBaseFolder;
         this.targetBasePath = targetBaseFolder;
         this.bucketNamePrefix = bucketNamePrefix;
         this.bucketSizeMax = bucketSizeMax;
-        this.currentBucketSpaceLeft = firstBucketSizeMax;
+        this.currentBucketSpaceLeft = firstBucketSpaceLeft;
     }
 
     public void run() throws IOException {
