@@ -18,6 +18,17 @@ public class DirectorySplitterTest {
     private TemporaryFolder tempTargetFolder;
 
     @Test
+    public void testDryRun() throws IOException {
+        File sourceFile = tempSourceFolder.createBinaryFile("file.bin", 333);
+
+        DirectorySplitter splitter = new DirectorySplitter(tempSourceFolder.getPath(), tempTargetFolder.getPath(),
+                "bucket_", 2, 1000, 1000, true);
+        splitter.run();
+
+        assertTrue(sourceFile.exists());
+    }
+
+    @Test
     public void testWithThreeFilesIntoSameBucket() throws IOException {
         File sourceFile1 = tempSourceFolder.createBinaryFile("file1.bin", 333);
         File targetFile1 = new File(tempTargetFolder.getPath().resolve("bucket_002").toFile(), "file1.bin");
