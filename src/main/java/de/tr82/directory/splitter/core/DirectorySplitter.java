@@ -52,7 +52,7 @@ public class DirectorySplitter {
                 .filter(path -> Files.isRegularFile(path))
                 .sorted()
                 .forEach(this::handlePath);
-        if (Files.list(sourceBasePath).findAny().isPresent()) {
+        if (!dryRun && Files.list(sourceBasePath).findAny().isPresent()) {
             Files.walk(sourceBasePath).forEach((Path path) -> path.toFile().delete());
         }
 
