@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="418.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="13.0" layoutY="19.0" text="Source directory:" AnchorPane.leftAnchor="13.0" />
+      <TextField fx:id="txtSourceDir" editable="false" layoutX="169.0" layoutY="14.0" prefHeight="26.0" prefWidth="312.0" AnchorPane.leftAnchor="169.0" AnchorPane.rightAnchor="115.0" />
+      <Button fx:id="btnChooseSourceDir" layoutX="494.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Choose ..." AnchorPane.rightAnchor="14.0" />
+      <Label layoutX="14.0" layoutY="55.0" text="Target directory:" />
+      <TextField fx:id="txtTargetDir" editable="false" layoutX="169.0" layoutY="50.0" prefHeight="26.0" prefWidth="312.0" AnchorPane.leftAnchor="169.0" AnchorPane.rightAnchor="115.0" />
+      <Button fx:id="btnChooseTargetDir" layoutX="494.0" layoutY="50.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Choose ..." AnchorPane.rightAnchor="14.0" />
+      <Label layoutX="14.0" layoutY="91.0" text="Bucket name prefix:" />
+      <TextField fx:id="txtBucketPrefix" layoutX="169.0" layoutY="86.0" prefHeight="26.0" prefWidth="92.0" AnchorPane.leftAnchor="169.0" AnchorPane.rightAnchor="339.0" />
+      <Label layoutX="14.0" layoutY="127.0" text="First bucket index:" />
+      <Spinner fx:id="txtFirstBucketIndex" editable="true" layoutX="169.0" layoutY="122.0" prefHeight="26.0" prefWidth="92.0" AnchorPane.leftAnchor="169.0" AnchorPane.rightAnchor="339.0" />
+      <Label layoutX="14.0" layoutY="163.0" text="First bucket space left:" />
+      <Spinner fx:id="txtFirstBucketSpaceLeft" editable="true" layoutX="169.0" layoutY="158.0" prefHeight="26.0" prefWidth="92.0" AnchorPane.leftAnchor="169.0" AnchorPane.rightAnchor="339.0" />
+      <ChoiceBox fx:id="cmbFirstBucketSpaceLeftUnit" layoutX="270.0" layoutY="158.0" prefHeight="26.0" prefWidth="92.0" AnchorPane.rightAnchor="238.0" />
+      <Label layoutX="14.0" layoutY="197.0" text="Bucket max size:" />
+      <Spinner fx:id="txtBucketMaxSize" editable="true" layoutX="169.0" layoutY="192.0" prefHeight="26.0" prefWidth="92.0" AnchorPane.leftAnchor="169.0" AnchorPane.rightAnchor="339.0" />
+      <ChoiceBox fx:id="cmbBucketMaxSizeUnit" layoutX="270.0" layoutY="192.0" prefHeight="26.0" prefWidth="92.0" AnchorPane.rightAnchor="238.0" />
+      <Button fx:id="btnRun" layoutX="482.0" layoutY="124.0" mnemonicParsing="false" prefHeight="95.0" prefWidth="104.0" text="Run" AnchorPane.rightAnchor="14.0" />
+      <Button fx:id="btnDryRun" layoutX="368.0" layoutY="124.0" mnemonicParsing="false" prefHeight="95.0" prefWidth="104.0" text="Dry run" AnchorPane.rightAnchor="128.0" />
+      <ProgressBar fx:id="prgProgress" layoutX="13.0" layoutY="235.0" prefHeight="26.0" prefWidth="573.0" progress="0.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="14.0" />
+      <TextArea fx:id="txtLogArea" editable="false" layoutX="13.0" layoutY="269.0" prefHeight="137.0" prefWidth="573.0" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="269.0" />
+   </children>
+</AnchorPane>
