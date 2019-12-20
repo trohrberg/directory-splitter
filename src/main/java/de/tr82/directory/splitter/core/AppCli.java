@@ -7,7 +7,7 @@ import java.nio.file.Path;
 public class AppCli {
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
+        if (args.length != 6) {
             System.out.println(
                     "Missing parameters. Please specify source and target base directories and plus chunk size.");
             return;
@@ -15,9 +15,13 @@ public class AppCli {
 
         final Path sourceBasePath = new File(args[0]).toPath();
         final Path targetBasePath = new File(args[1]).toPath();
+        final int firstBucketIndex = Integer.parseInt(args[2]);
+        final long firstBucketSpaceLef = parseChunkSize(args[3]);
+        final long bucketSizeMax = parseChunkSize(args[4]);
+        final boolean dryRun = Boolean.parseBoolean(args[5]);
 
         DirectorySplitter splitter = new DirectorySplitter(sourceBasePath, targetBasePath, "RAWBLU_",
-                1, parseChunkSize("1.0G"), parseChunkSize(args[2]), true);
+                firstBucketIndex, firstBucketSpaceLef, bucketSizeMax, dryRun);
         splitter.run();
     }
 
